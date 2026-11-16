@@ -1,0 +1,106 @@
+/* One travel journal on blush paper: photos are taped in, places are stickers, each trip writes in its own ink. */
+:root {
+  color-scheme: light;
+  --paper: #FDF2EA;
+  --paper-deep: #F9E4D8;
+  --card: #FFFBF7;
+  --ink: #241B18;
+  --ink-soft: #66564F;
+  --line: rgba(36, 27, 24, .13);
+  --white: #FFFFFF;
+  --ocean: #C4E6F5;
+  --land: #BFE5BE;
+  --land-far: #E6EFDC;
+  --marigold: #F7C325;
+  --t: #D23F2B;    /* the current trip's ink (src/lib/ink.ts) */
+  --tint: #FFDCD2; /* and its pale paper */
+
+  --sans: 'Bricolage Grotesque Variable', 'Bricolage Grotesque', system-ui, -apple-system, sans-serif;
+  --serif: 'Fraunces Variable', 'Fraunces', 'Iowan Old Style', Georgia, serif;
+  --hand: 'Caveat Variable', 'Caveat', 'Bradley Hand', cursive;
+
+  --ease: cubic-bezier(.2, .75, .15, 1);
+  --spring: cubic-bezier(.34, 1.56, .64, 1);
+  --lift: 0 1px 2px rgba(122, 72, 50, .14), 0 10px 22px -8px rgba(122, 72, 50, .26), 0 26px 44px -22px rgba(122, 72, 50, .24);
+  --lift-hi: 0 2px 3px rgba(122, 72, 50, .14), 0 18px 30px -10px rgba(122, 72, 50, .32), 0 38px 60px -24px rgba(122, 72, 50, .3);
+  --gutter-l: max(16px, env(safe-area-inset-left, 0px));
+  --gutter-r: max(16px, env(safe-area-inset-right, 0px));
+  --safe-t: env(safe-area-inset-top, 0px);
+  --safe-b: env(safe-area-inset-bottom, 0px);
+  --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .45 0 0 0 0 .27 0 0 0 0 .18 0 0 0 .09 0'/%3E%3C/filter%3E%3Crect width='220' height='220' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+* { box-sizing: border-box; margin: 0; }
+[hidden] { display: none !important; }
+html { -webkit-text-size-adjust: 100%; overflow-x: clip; }
+body {
+  background: var(--paper) var(--grain);
+  color: var(--ink);
+  font: 400 16px/1.55 var(--sans);
+  -webkit-font-smoothing: antialiased;
+  overflow-x: clip;
+}
+button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; }
+a { color: inherit; text-decoration: none; }
+img { display: block; max-width: 100%; }
+ol, ul { list-style: none; padding: 0; }
+:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; border-radius: 6px; }
+h1, h2, h3 { font-weight: 800; letter-spacing: -.022em; line-height: .98; text-wrap: balance; }
+
+/* The italic word in a trip's ink */
+em.i { font-family: var(--serif); font-style: italic; font-weight: 600; font-variation-settings: 'SOFT' 100, 'WONK' 1; letter-spacing: -.025em; color: var(--t); }
+.hand { font-family: var(--hand); font-weight: 700; }
+
+/* ---------- stickers (src/components/StickerSprite.astro) ---------- */
+.st { display: block; width: 48px; height: 48px; overflow: visible; flex: none; }
+.st .cut { fill: var(--white); stroke: var(--white); stroke-width: 6; stroke-linejoin: round; stroke-linecap: round; }
+.spark { display: inline-block; width: .52em; height: .52em; color: var(--t); vertical-align: .55em; overflow: visible; }
+.spark path { fill: none; stroke: currentColor; stroke-width: 5.5; stroke-linecap: round; }
+.ic { width: 20px; height: 20px; flex: none; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+
+/* The one main action: black, round, with an arrow */
+.go { display: inline-grid; place-items: center; flex: none; width: 52px; height: 52px; border-radius: 50%; background: var(--ink); color: var(--paper); transition: transform .35s var(--spring); }
+.go .ic { width: 22px; height: 22px; }
+.cta { display: flex; align-items: center; justify-content: space-between; gap: 14px; width: 100%; min-height: 56px; padding: 6px 8px 6px 24px; border-radius: 99px; background: var(--ink); color: var(--paper); font-weight: 700; transition: transform .35s var(--spring); }
+.cta .arrow { display: grid; place-items: center; width: 42px; height: 42px; border-radius: 50%; background: var(--paper); color: var(--ink); transition: transform .35s var(--spring); }
+.cta:hover .arrow { transform: translateX(3px); }
+.cta:active, .go:active { transform: scale(.96); }
+.ghost { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 48px; padding: 0 22px; border-radius: 99px; background: var(--card); box-shadow: inset 0 0 0 1.5px var(--line); font-weight: 600; }
+
+/* A postage stamp with a real perforated edge */
+.stamp {
+  --dot: 8px;
+  --holes: radial-gradient(circle calc(var(--dot) * .62) at 50% 50%, #0000 96%, #000) calc(var(--dot) * -.75) calc(var(--dot) * -.75) / calc(var(--dot) * 1.5) calc(var(--dot) * 1.5);
+  --middle: linear-gradient(#000 0 0) center / calc(100% - var(--dot) * 1.5) calc(100% - var(--dot) * 1.5) no-repeat;
+  display: block; padding: 9px; background: var(--white);
+  -webkit-mask: var(--middle), var(--holes);
+  mask: var(--middle), var(--holes);
+}
+.stamp-wrap { display: block; filter: drop-shadow(0 6px 8px rgba(122, 72, 50, .24)); }
+.stamp-face { position: relative; display: grid; aspect-ratio: 4 / 5; overflow: hidden; background: var(--t); color: var(--white); }
+.stamp-face img { width: 100%; height: 100%; object-fit: cover; }
+.stamp-face b { position: absolute; left: 0; right: 0; bottom: 0; padding: 12px 0 3px; text-align: center; font-size: 13px; letter-spacing: .06em; background: linear-gradient(transparent, rgba(0, 0, 0, .6)); }
+
+/* Washi tape */
+.tape {
+  position: absolute; z-index: 3; width: 74px; height: 22px; opacity: .92;
+  background: repeating-linear-gradient(90deg, color-mix(in srgb, var(--t) 62%, white) 0 5px, color-mix(in srgb, var(--t) 34%, white) 5px 10px);
+  clip-path: polygon(0 0, 4% 16%, 0 33%, 4% 50%, 0 66%, 4% 83%, 0 100%, 100% 100%, 96% 83%, 100% 66%, 96% 50%, 100% 33%, 96% 16%, 100% 0);
+}
+
+/* A photo print */
+.print { display: block; padding: 7px; background: var(--white); border-radius: 5px; box-shadow: var(--lift); }
+.print img { width: 100%; height: 100%; object-fit: cover; border-radius: 2px; background: var(--paper-deep); }
+
+/* Small text in a trip's ink is deepened so it stays readable on tinted paper */
+.ink-small { color: color-mix(in srgb, var(--t) 72%, var(--ink)); }
+
+/* The trip's photo carries over from a home page card to the journal cover */
+@media (prefers-reduced-motion: no-preference) {
+  @view-transition { navigation: auto; }
+  ::view-transition-group(vt-cover) { animation-duration: .6s; animation-timing-function: var(--ease); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .001ms !important; animation-iteration-count: 1 !important; transition-duration: .001ms !important; }
+}

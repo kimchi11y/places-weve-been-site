@@ -1,0 +1,325 @@
+---
+import Base from '../layouts/Base.astro';
+import { trips, photo, REPO } from '../data/trips';
+
+const totalDays = trips.reduce((n, t) => n + t.days, 0);
+const countries = new Set(trips.flatMap((t) => t.numeric)).size;
+
+// The journal's photo table: every trip's best photos, scattered around the middle
+const table = [
+  ['japan-2024', 'kyoto-1', 'Kyoto'], ['iceland-2021', 'jokulsarlon-1', 'Jökulsárlón'], ['morocco-2022', 'chefchaouen-1', 'Chefchaouen'],
+  ['austria-germany-2025', 'hallstatt-1', 'Hallstatt'], ['jeju-2025', 'seongsan-1', 'Seongsan'], ['japan-2024', 'hakone-1', 'Hakone'],
+  ['seoul-busan-2023', 'seoul-1', 'Seoul'], ['iceland-2021', 'vik-1', 'Vík'], ['austria-germany-2025', 'vienna-2', 'Vienna'],
+  ['morocco-2022', 'marrakech-1', 'Marrakech'], ['seoul-busan-2023', 'busan-1', 'Busan'], ['japan-2024', 'osaka-1', 'Osaka'],
+];
+const notes = ['best day ever', 'so cold!!', 'blue everything', 'first ferry', 'sunrise 5:40am', 'Fuji showed up', 'hanbok day', 'black sand', 'cake no. 4', 'lost again', 'rainbow houses', 'takoyaki x3'];
+
+const passport = [
+  { name: 'Iceland', code: 'IS', year: 2021, ink: '#1C6CB5', shape: 'round' },
+  { name: 'Morocco', code: 'MA', year: 2022, ink: '#2A7A4B', shape: 'rect' },
+  { name: 'South Korea', code: 'KR', year: 2023, ink: '#7A3FA3', shape: 'oval', twice: true },
+  { name: 'Japan', code: 'JP', year: 2024, ink: '#A35E00', shape: 'round' },
+  { name: 'Austria', code: 'AT', year: 2025, ink: '#D23F2B', shape: 'rect' },
+  { name: 'Germany', code: 'DE', year: 2025, ink: '#C22A66', shape: 'oval' },
+];
+
+const little = [
+  { sticker: 's-cam', title: 'From your phone', text: 'Drag photos onto a stop in the editor. iPhone HEIC photos work in every browser.' },
+  { sticker: 's-heart', title: 'Vlogs too', text: 'Link a YouTube vlog to any trip and it plays right in the journal.' },
+  { sticker: 's-flower', title: 'Back again', text: 'Visit a country twice and each trip keeps its own route. Their labels merge until you pick one.' },
+  { sticker: 's-sun', title: 'Find anything', text: 'Press ⌘K to search every trip, stop and story.' },
+  { sticker: 's-shades', title: 'Drafts', text: 'A new trip stays hidden until you tick “Show on the site”.' },
+  { sticker: 's-plane', title: 'Backups', text: 'One command copies every trip and photo to your computer, in plain SQL.' },
+];
+---
+
+<Base>
+  <a class="skip" href="#main">Skip to the page</a>
+
+  <header class="nav">
+    <a class="brand" href="#top" aria-label="Places We've Been, to the top">
+      <svg class="st" viewBox="0 0 48 48" aria-hidden="true"><use href="#s-plane" /></svg>
+      <span>Places we’ve <em class="i">been</em></span>
+    </a>
+    <nav aria-label="Sections">
+      <a href="#tour">Tour</a>
+      <a href="#journal">Journal</a>
+      <a href="#privacy">Privacy</a>
+      <a href="#self-host">Self-host</a>
+    </nav>
+    <a class="gh" href={REPO}><svg class="ic"><use href="#i-gh" /></svg><span>GitHub</span></a>
+  </header>
+
+  <main id="main">
+    <!-- 1 + 2: the hero, then the globe tour. One globe, pinned through both. -->
+    <section class="world" id="top">
+      <div class="world-pin">
+        <div class="globe-stage" aria-hidden="true">
+                    <svg class="globe">
+            <defs>
+              <radialGradient id="oceanGrad" cx="38%" cy="32%" r="75%"><stop offset="0" stop-color="#D6EEF8" /><stop offset=".7" stop-color="#B9DFF1" /><stop offset="1" stop-color="#8CC4E2" /></radialGradient>
+              <radialGradient id="dropGrad"><stop offset=".86" stop-color="#7A4832" stop-opacity=".26" /><stop offset="1" stop-color="#7A4832" stop-opacity="0" /></radialGradient>
+              <radialGradient id="shadeGrad" cx="36%" cy="30%" r="72%"><stop offset=".55" stop-color="#fff" stop-opacity="0" /><stop offset="1" stop-color="#3B6E8F" stop-opacity=".22" /></radialGradient>
+            </defs>
+          </svg>
+          <div class="pins"></div>
+          <div class="globe-hit"></div>
+        </div>
+
+        <div class="hero">
+          <p class="kicker hand"><span>an open-source family travel scrapbook</span></p>
+          <h1 class="hero-title">
+            <span class="line"><span class="w">Places</span> <span class="w">we’ve</span></span>
+            <span class="line been-line">
+              <em class="i been">been</em>
+              <svg class="spark" viewBox="0 0 40 40" aria-hidden="true"><path d="M8 14 3 4M18 11l3-10M24 22l12-4" /></svg>
+            </span>
+          </h1>
+          <p class="lede">A paper globe of every trip your family takes, with journals, photos and stories. You host it free on Cloudflare, and only the people you choose can see it.</p>
+          <div class="hero-cta">
+            <a class="cta" href={REPO}><span>Get it on GitHub</span><span class="arrow"><svg class="ic"><use href="#i-gh" /></svg></span></a>
+            <a class="ghost" href="#tour"><svg class="ic"><use href="#i-down" /></svg>Take the tour</a>
+          </div>
+          <dl class="stats">
+            <div><dt>trips</dt><dd data-count={trips.length}>{trips.length}</dd></div>
+            <div><dt>countries</dt><dd data-count={countries}>{countries}</dd></div>
+            <div><dt>days</dt><dd data-count={totalDays}>{totalDays}</dd></div>
+          </dl>
+          <p class="spin-hint hand" aria-hidden="true">give it a spin!
+            <svg viewBox="0 0 60 30"><path d="M4 6c10 16 30 20 48 12M44 12l8 6-9 5" /></svg>
+          </p>
+        </div>
+
+        <svg class="float-st f1" viewBox="0 0 48 48" aria-hidden="true"><use href="#s-sun" /></svg>
+        <svg class="float-st f2" viewBox="0 0 48 48" aria-hidden="true"><use href="#s-cam" /></svg>
+        <svg class="float-st f3" viewBox="0 0 48 48" aria-hidden="true"><use href="#s-flower" /></svg>
+        <div class="hero-plane" aria-hidden="true">
+          <svg class="trail" viewBox="0 0 400 200"><path d="M10 190C80 170 90 90 170 110s60 70 120 30S350 30 390 14" /></svg>
+          <svg class="st plane" viewBox="0 0 48 48"><use href="#s-plane" /></svg>
+        </div>
+
+        <div class="tour" id="tour">
+          <div class="years" aria-hidden="true">
+            {trips.map((t) => <span style={`--t:${t.ink}`}>{t.year}</span>)}
+          </div>
+          <p class="tour-kicker hand">every trip writes in its own ink</p>
+          <ol class="cards">
+            {trips.map((t, i) => (
+              <li class="card" style={`--t:${t.ink};--tint:${t.tint}`}>
+                <div class="card-photos">
+                  {t.stops.slice(0, 3).map((s, j) => (
+                    <span class={`print p${j}`}><img src={photo(t.id, s.photos[0])} alt={`${s.name}, ${t.title}`} loading="lazy" /></span>
+                  ))}
+                  <span class="tape"></span>
+                  <span class="stamp-wrap"><span class="stamp"><span class="stamp-face"><img src={photo(t.id, t.stops.at(-1)!.photos.at(-1)!)} alt="" loading="lazy" /><b>{t.stops.at(-1)!.code}</b></span></span></span>
+                </div>
+                <div class="card-text">
+                  <p class="card-dates hand ink-small">{t.dates}</p>
+                  <h3>{t.days} days in <em class="i">{t.word}</em></h3>
+                  <p>{t.summary}</p>
+                  <p class="route">{t.stops.map((s) => s.code).join(' → ')}</p>
+                </div>
+                <span class="sr-only">Trip {i + 1} of {trips.length}</span>
+              </li>
+            ))}
+          </ol>
+          <ol class="rail" aria-hidden="true">
+            {trips.map((t) => <li style={`--t:${t.ink}`}><span></span>{t.year}</li>)}
+          </ol>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3: the journal, from envelope to photo table -->
+    <section class="journal" id="journal">
+      <div class="journal-pin">
+        <div class="journal-head">
+          <p class="kicker hand">and every trip gets a journal</p>
+          <h2>Open the <em class="i">journal</em></h2>
+        </div>
+        <div class="envelope" aria-hidden="true">
+          <div class="env-back"></div>
+          <div class="env-photos">
+            <span class="print e0"><img src={photo('japan-2024', 'kyoto-1', 1100)} alt="" /></span>
+            <span class="print e1"><img src={photo('japan-2024', 'tokyo-2')} alt="" /></span>
+            <span class="print e2"><img src={photo('japan-2024', 'hakone-1', 1100)} alt="" /></span>
+          </div>
+          <div class="env-front">
+            <span class="env-tag hand">Tokyo <svg viewBox="0 0 48 48"><path d="M24 42C10 32 4 25 4 16 4 9 10 5 15 5c4 0 7 2 9 6 2-4 5-6 9-6 5 0 11 4 11 11 0 9-6 16-20 26z" /></svg></span>
+            <svg class="env-plane" viewBox="0 0 48 48"><use href="#s-plane" /></svg>
+          </div>
+          <span class="stamp-wrap env-stamp"><span class="stamp"><span class="stamp-face"><img src={photo('japan-2024', 'osaka-1')} alt="" /><b>OSA</b></span></span></span>
+        </div>
+        <div class="journal-copy">
+          <p>Every stop gets a page: the story, little handwritten notes, and a photo wall in the order the camera took them. Then a full-screen viewer walks you through the whole trip.</p>
+          <p class="hand drag-hint">go on, move them around ↓</p>
+        </div>
+        <div class="table">
+          {table.map(([trip, name, place], i) => (
+            <figure class="polaroid" style={`--i:${i}`}>
+              <img src={photo(trip, name)} alt={place} loading="lazy" draggable="false" />
+              <figcaption class="hand">{place} · {notes[i]}</figcaption>
+            </figure>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <!-- 4: the real app -->
+    <section class="app" id="app">
+      <div class="app-head">
+        <p class="kicker hand">not a mock-up. this is the app</p>
+        <h2>Made for the <em class="i">family</em> chat</h2>
+        <p>Most of your family will open it on a phone, from a link someone sent, so it’s built for phones first. On a big screen the globe gets room to breathe.</p>
+      </div>
+      <div class="devices">
+        <figure class="browser">
+          <div class="browser-bar"><i></i><i></i><i></i><span>places.yourfamily.com</span></div>
+          <img src="/img/app/home-desktop.webp" alt="The app's home page on a computer: the paper globe with a photo sticker for each trip" width="1440" height="900" loading="lazy" />
+        </figure>
+        <figure class="phone ph1"><img src="/img/app/home-phone.webp" alt="The globe on a phone" width="780" height="1688" loading="lazy" /></figure>
+        <figure class="phone ph2"><img src="/img/app/trip-phone.webp" alt="A trip's journal on a phone: photos tucked into an envelope, 13 days in Japan" width="780" height="1688" loading="lazy" /></figure>
+        <p class="note n1 hand">drag to spin the world</p>
+        <p class="note n2 hand">photos tucked in an envelope</p>
+      </div>
+    </section>
+
+    <!-- 5: privacy -->
+    <section class="privacy" id="privacy">
+      <div class="privacy-pin">
+        <div class="privacy-copy">
+          <p class="kicker hand">the bit we care about most</p>
+          <h2>Your photos stay <em class="i">in the family</em></h2>
+          <ol class="steps">
+            <li class="step">
+              <b>Phone photos remember where you live.</b>
+              <span>Every photo carries hidden details: the exact spot it was taken, the phone, the time. Posted as-is, a photo from home gives your home away.</span>
+            </li>
+            <li class="step">
+              <b>So your browser redraws every photo first.</b>
+              <span>Before a photo is sent, it is turned upright, resized and redrawn, leaving the hidden details behind. The server double-checks and refuses any photo that still has them.</span>
+            </li>
+            <li class="step">
+              <b>Then only your people get in.</b>
+              <span>Cloudflare Access lets in the emails you list (free for up to 50 people). Family type their email and get a one-time code. No accounts, no passwords.</span>
+            </li>
+          </ol>
+        </div>
+        <div class="scan" aria-hidden="true">
+          <div class="scan-photo print"><img src={photo('seoul-busan-2023', 'seoul-1', 1100)} alt="" /><div class="scan-bar"></div></div>
+          <span class="meta m0"><svg class="ic"><use href="#i-pin" /></svg>37.5796° N, 126.9770° E</span>
+          <span class="meta m1">iPhone 15 Pro · f/1.78</span>
+          <span class="meta m2">2023:10:06 09:41:12</span>
+          <span class="meta m3">Serial 4C02…91F</span>
+          <span class="meta m4">Altitude 38.2 m</span>
+          <div class="gate">
+            <div class="lock"><svg class="ic"><use href="#i-lock" /></svg></div>
+            <p class="pin-code"><span>4</span><span>8</span><span>2</span><span>9</span><span>1</span><span>6</span></p>
+            <p class="gate-note">Your sign-in code from Cloudflare Access</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 6: passport + the little things -->
+    <section class="passport-sec">
+      <div class="passport-wrap">
+        <div class="passport-copy">
+          <p class="kicker hand">collect them all</p>
+          <h2>A passport that <em class="i">fills itself</em></h2>
+          <p>Every country you visit gets a stamp in the family passport, in the colour of the trip that took you there.</p>
+        </div>
+        <div class="passport" aria-label="Passport stamps">
+          {passport.map((p, i) => (
+            <div class={`pstamp ${p.shape}`} style={`--t:${p.ink};--r:${[-8, 6, -4, 9, -6, 4][i]}deg`}>
+              <span class="ps-code">{p.code}</span>
+              <span class="ps-name">{p.name}</span>
+              <span class="ps-year">{p.twice ? '2023 · 2025' : p.year}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div class="little">
+        <h2 class="little-title">And the <em class="i">little</em> things</h2>
+        <ul class="little-grid">
+          {little.map((l) => (
+            <li class="tag-card">
+              <svg class="st" viewBox="0 0 48 48" aria-hidden="true"><use href={`#${l.sticker}`} /></svg>
+              <b>{l.title}</b>
+              <span>{l.text}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+
+    <!-- 7: self-host -->
+    <section class="host" id="self-host">
+      <div class="host-head">
+        <p class="kicker hand">free, forever, on your own account</p>
+        <h2>Yours in an <em class="i">afternoon</em></h2>
+        <p>No sign-ups and no subscriptions. Fork the code, put it on Cloudflare’s free plan, and the trips and photos live on your account, not ours.</p>
+      </div>
+      <div class="host-grid">
+        <ol class="passes">
+          <li class="pass" style="--t:#1C6CB5">
+            <div class="pass-main">
+              <span class="pass-k">Step 01 · on your computer</span>
+              <b>Try it with the example trips</b>
+              <span>Six trips with public-domain photos. No Cloudflare account needed.</span>
+            </div>
+            <div class="pass-stub"><span>FROM</span><b>GIT</b><span>TO</span><b>DEV</b></div>
+          </li>
+          <li class="pass" style="--t:#2A7A4B">
+            <div class="pass-main">
+              <span class="pass-k">Step 02 · on Cloudflare</span>
+              <b>Put it online</b>
+              <span>Make a database and photo storage, import your repo, and every push deploys itself.</span>
+            </div>
+            <div class="pass-stub"><span>FROM</span><b>DEV</b><span>TO</span><b>WEB</b></div>
+          </li>
+          <li class="pass" style="--t:#D23F2B">
+            <div class="pass-main">
+              <span class="pass-k">Step 03 · in Zero Trust</span>
+              <b>Let only your family in</b>
+              <span>List their emails in Cloudflare Access. They sign in with a code, and that’s it.</span>
+            </div>
+            <div class="pass-stub"><span>FROM</span><b>WEB</b><span>TO</span><b>FAM</b></div>
+          </li>
+        </ol>
+        <div class="term">
+          <div class="term-bar"><i></i><i></i><i></i><span>~/places-weve-been</span>
+            <button class="copy" type="button" aria-label="Copy the commands"><svg class="ic"><use href="#i-copy" /></svg></button>
+          </div>
+          <pre><code><span class="ln" data-cmd="git clone https://github.com/kimchi11y/places-weve-been"></span>
+<span class="ln" data-cmd="cd places-weve-been && npm install"></span>
+<span class="ln" data-cmd="npm run seed" data-out="  Iceland: 3 stops, 3 photos|  Japan: 4 stops, 6 photos|  … 6 example trips loaded"></span>
+<span class="ln" data-cmd="npm run dev" data-out="  ➜ Local: http://localhost:4321"></span></code></pre>
+        </div>
+      </div>
+      <ul class="badges">
+        <li>Cloudflare free plan</li><li>MIT licence</li><li>No tracking, no ads</li><li>Astro · D1 · R2</li><li>Backups in plain SQL</li>
+      </ul>
+    </section>
+  </main>
+
+  <footer class="end">
+    <svg class="end-path" viewBox="0 0 1200 300" preserveAspectRatio="none" aria-hidden="true">
+      <path id="endRoute" d="M-20 250C180 260 260 120 420 140s180 120 330 60S960 10 1220 40" />
+    </svg>
+    <svg class="st end-plane" viewBox="0 0 48 48" aria-hidden="true"><use href="#s-plane" /></svg>
+    <h2>Where to <em class="i">next?</em></h2>
+    <p>Start your family’s scrapbook today. It’s free, it’s yours, and it’s ready for the next trip.</p>
+    <div class="end-cta">
+      <a class="cta" href={REPO}><span>Fork it on GitHub</span><span class="arrow"><svg class="ic"><use href="#i-arrow" /></svg></span></a>
+      <a class="ghost" href={`${REPO}#deploying`}>Read the setup guide</a>
+    </div>
+    <p class="fine">MIT licence · Example photos are public domain, from <a href={`${REPO}/blob/main/seed/CREDITS.md`}>Wikimedia Commons</a> · Made with love by <a href="https://github.com/kimchi11y">kimchi11y</a></p>
+  </footer>
+
+  <script>
+    import { start } from '../scripts/main';
+    start();
+  </script>
+</Base>
